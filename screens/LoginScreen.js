@@ -7,6 +7,15 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { TouchableOpacity } from "react-native";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
+import { auth } from "../firebase";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+
+import { useEffect } from "react";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -14,11 +23,28 @@ const LoginScreen = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
 
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      if (authUser) {
+        navigation.replace("Services");
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
   const handleLogin = () => {
-    // Handle login logic here
+    signInWithEmailAndPassword(auth, email, password)
+      .then((cred) => {
+        console.log(cred.user);
+      })
+      .catch((err) => {
+        alert(err);
+      });
   };
 
-  const navigation = useNavigation();
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,

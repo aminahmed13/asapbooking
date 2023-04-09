@@ -9,6 +9,8 @@ const CustomInput = (props) => {
 
   return (
     <Input
+      multiline={props.multiline}
+      numberOfLines={props.multiline ? props.numberOfLines : 1}
       placeholder={props.placeholder}
       value={props.value}
       onChangeText={props.onChangeText}

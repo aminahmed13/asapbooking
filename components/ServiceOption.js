@@ -55,6 +55,7 @@ const ServiceOption = (props) => {
         }}
       >
         <TouchableOpacity
+          onPress={props.onPress}
           activeOpacity={0.5}
           style={{
             backgroundColor: "#ede6fd",

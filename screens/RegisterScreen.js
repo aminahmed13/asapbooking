@@ -8,6 +8,12 @@ import { TouchableOpacity } from "react-native";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
 import { KeyboardAvoidingView } from "react-native";
+import {
+  createUserWithEmailAndPassword,
+  updatePhoneNumber,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../firebase";
 
 const RegisterScreen = () => {
   const [fullName, setFullName] = useState("");
@@ -20,7 +26,14 @@ const RegisterScreen = () => {
     useState(false);
 
   const handleRegister = () => {
-    // Handle Register logic here
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((cred) => {
+        updateProfile(cred.user, {
+          displayName: fullName,
+        });
+      })
+
+      .catch((err) => console.log("This is your error: ", err));
   };
 
   const navigation = useNavigation();
