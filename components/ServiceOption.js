@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const ServiceOption = (props) => {
   return (
@@ -35,8 +36,8 @@ const ServiceOption = (props) => {
             flexDirection: "row",
           }}
         >
-          <Icon
-            name="lock"
+          <MaterialCommunityIcons
+            name="seat-passenger"
             size={18}
             type="antdesign"
             color="#5e17eb"

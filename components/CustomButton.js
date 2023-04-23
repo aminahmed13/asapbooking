@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React from "react";
-import { Input, CheckBox, Button } from "@rneui/base";
+import { Button } from "@rneui/base";
 
 const CustomButton = (props) => {
   return (

@@ -1,14 +1,23 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { signOut } from "firebase/auth";
 import CustomButton from "../components/CustomButton";
 import { useState } from "react";
+import {
+  collection,
+  documentId,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 
 const TicketInfoScreen = ({ route, navigation }) => {
-  const [turn, setTurn] = useState(false);
+  const [turn, setTurn] = useState(true);
+  const [ticket, setTicket] = useState([]);
   const signOutUser = () => {
     signOut(auth)
       .then(() => {
@@ -18,6 +27,8 @@ const TicketInfoScreen = ({ route, navigation }) => {
         alert(err);
       });
   };
+
+  const { ticketId } = route.params;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -42,6 +53,26 @@ const TicketInfoScreen = ({ route, navigation }) => {
       ),
     });
   });
+
+  const colRef = collection(db, "tickets");
+  const q = query(
+    colRef,
+    where(documentId(), "==", ticketId)
+    // orderBy("timestamp")
+  );
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setTicket(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
+
+    return unsubscribe;
+  }, []);
 
   const handleCancelTicket = () => {
     console.log("cancel ticket");
@@ -76,7 +107,7 @@ const TicketInfoScreen = ({ route, navigation }) => {
             fontSize: 35,
           }}
         >
-          A305
+          A21
         </Text>
       </View>
       <View style={styles.ticketDetailsContainer}>
@@ -86,95 +117,109 @@ const TicketInfoScreen = ({ route, navigation }) => {
         </View>
         <View style={styles.ticketDetails}>
           <Text style={styles.label}>Estimated Call Time</Text>
-          <Text style={styles.info}>3 min</Text>
+          <Text style={styles.info}>task comp time</Text>
         </View>
         <View style={styles.ticketDetails}>
           <Text style={styles.label}>Service</Text>
-          <Text style={styles.info}>Add/Drop</Text>
+          <Text style={styles.info}>service name</Text>
         </View>
       </View>
-
-      <View>
+      {turn && (
         <View
           style={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "#36db28",
-              fontSize: 20,
-              fontWeight: 500,
-            }}
-          >
-            Your turn has reached. Please proceed to counter
-          </Text>
-          <Text>2</Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginHorizontal: 50,
+            marginTop: 50,
           }}
         >
           <View
             style={{
               alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              marginHorizontal: 30,
+              marginBottom: 30,
             }}
           >
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#42e134",
-                width: 50,
-                height: 50,
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
-              }}
-            >
-              <Icon name="check" color="white" size={30} />
-            </TouchableOpacity>
             <Text
               style={{
-                fontWeight: "600",
-                fontSize: 16,
+                color: "#36db28",
+                fontSize: 20,
+                fontWeight: 500,
               }}
             >
-              I am available
+              Your turn has reached. Please proceed to counter
+            </Text>
+            <Text
+              style={{
+                fontWeight: 800,
+                fontSize: 50,
+              }}
+            >
+              2
             </Text>
           </View>
-
           <View
             style={{
-              alignItems: "center",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginHorizontal: 50,
             }}
           >
-            <TouchableOpacity
+            <View
               style={{
-                backgroundColor: "#ff0505",
-                width: 50,
-                height: 50,
                 alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
               }}
             >
-              <Icon name="check" color="white" size={30} />
-            </TouchableOpacity>
-            <Text
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#42e134",
+                  width: 50,
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                }}
+              >
+                <Icon name="check" color="white" size={30} />
+              </TouchableOpacity>
+              <Text
+                style={{
+                  fontWeight: "600",
+                  fontSize: 16,
+                }}
+              >
+                I am available
+              </Text>
+            </View>
+
+            <View
               style={{
-                fontWeight: "600",
-                fontSize: 16,
+                alignItems: "center",
               }}
             >
-              I'm not available
-            </Text>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#ff0505",
+                  width: 50,
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                }}
+              >
+                <Icon name="close" color="white" size={30} />
+              </TouchableOpacity>
+              <Text
+                style={{
+                  fontWeight: "600",
+                  fontSize: 16,
+                }}
+              >
+                I'm not available
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-
+      )}
       <View style={styles.buttonContainer}>
         <CustomButton
           title="Cancel Ticket"
@@ -211,3 +256,22 @@ const styles = StyleSheet.create({
     marginTop: 200,
   },
 });
+
+/*
+1. your queue number --> ticketNumber
+2. now Serving --> ??
+3. Estimated time call:
+    a. get serviceId from ticket 
+    b. get task completion time from service collection
+    c. get "waiting" tickets that has the same serviceId 
+    d. multiply the number of tickets we get from c by the task completion time we get from b
+4. Service --> ServiceId --> Service collection --> service_name
+
+cancel ticket--> 
+  1. update ticket status to cacelled
+  2. go back to services page
+
+
+
+what more features can we add
+*/

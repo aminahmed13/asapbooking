@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -12,15 +12,19 @@ import {
   onSnapshot,
   addDoc,
   serverTimestamp,
+  query,
+  where,
+  orderBy,
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const GetTicket = ({ route }) => {
   const [comment, setComment] = useState("");
   const [customerId, setCustomerId] = useState("");
+  const [tickets, setTickets] = useState([]);
   const navigation = useNavigation();
-  const { serviceId, serviceName, task_completion_time } = route.params;
+  const { serviceId, serviceName, task_completion_time, letter } = route.params;
   const signOutUser = () => {
     signOut(auth)
       .then(() => {
@@ -32,11 +36,19 @@ const GetTicket = ({ route }) => {
   };
 
   const colRef = collection(db, "tickets");
+  const q = query(
+    colRef,
+    where("serviceId", "==", serviceId),
+    orderBy("timestamp")
+  );
   useEffect(() => {
-    const unsubscribe = onSnapshot(colRef, (snapshot) => {
-      snapshot.docs.map((doc) => {
-        console.log(doc.id, doc.data());
-      });
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setTickets(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
     });
 
     const unsubscribe1 = onAuthStateChanged(auth, (authUser) => {
@@ -83,9 +95,13 @@ const GetTicket = ({ route }) => {
       estimated_call_time: task_completion_time,
       timestamp: serverTimestamp(),
       status: "waiting",
-    }).then(() => {
+      ticketNumber: letter + (tickets.length + 1),
+    }).then((docRef) => {
       setComment("");
-      navigation.navigate("TicketInfo");
+      console.log(docRef.id);
+      navigation.navigate("TicketInfo", {
+        ticketId: docRef.id,
+      });
     });
   };
   return (

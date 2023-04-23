@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -89,6 +89,7 @@ const ServicesScreen = () => {
               serviceId: service.id,
               serviceName: service.data.service_name,
               task_completion_time: service.data.task_completion_time,
+              letter: service.data.letter,
             });
           }}
         />

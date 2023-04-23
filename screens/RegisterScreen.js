@@ -28,6 +28,7 @@ const RegisterScreen = () => {
   const handleRegister = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((cred) => {
+        console.log(cred.user);
         updateProfile(cred.user, {
           displayName: fullName,
         });
@@ -181,11 +182,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#5e17eb",
   },
-  background: {
-    // height: "25%",
-  },
+  background: {},
   formContainer: {
-    // height: "85%",
     backgroundColor: "white",
     paddingHorizontal: 20,
     paddingTop: 20,
@@ -196,7 +194,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    // marginVertical: 5,
   },
   forgetPasswordLink: {
     color: "blue",

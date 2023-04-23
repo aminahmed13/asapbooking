@@ -14,7 +14,6 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-
 import { useEffect } from "react";
 
 const LoginScreen = () => {
