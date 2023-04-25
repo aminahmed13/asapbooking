@@ -74,6 +74,12 @@ const TicketInfoScreen = ({ route, navigation }) => {
     return unsubscribe;
   }, []);
 
+  const ticketNumber = ticket[0]?.data.ticketNumber;
+  useEffect(() => {
+    console.log(ticket);
+    console.log(ticketNumber);
+  }, [ticket]);
+
   const handleCancelTicket = () => {
     console.log("cancel ticket");
   };
@@ -107,7 +113,7 @@ const TicketInfoScreen = ({ route, navigation }) => {
             fontSize: 35,
           }}
         >
-          A21
+          {ticketNumber}
         </Text>
       </View>
       <View style={styles.ticketDetailsContainer}>

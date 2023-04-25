@@ -23,6 +23,7 @@ const GetTicket = ({ route }) => {
   const [comment, setComment] = useState("");
   const [customerId, setCustomerId] = useState("");
   const [tickets, setTickets] = useState([]);
+  const [waitingTickets, setWaitingTickets] = useState([]);
   const navigation = useNavigation();
   const { serviceId, serviceName, task_completion_time, letter } = route.params;
   const signOutUser = () => {
@@ -38,6 +39,13 @@ const GetTicket = ({ route }) => {
   const colRef = collection(db, "tickets");
   const q = query(
     colRef,
+    where("serviceId", "==", serviceId),
+    orderBy("timestamp")
+  );
+
+  const q_waiting = query(
+    colRef,
+    where("status", "==", "waiting"),
     where("serviceId", "==", serviceId),
     orderBy("timestamp")
   );
@@ -62,6 +70,25 @@ const GetTicket = ({ route }) => {
       unsubscribe1();
     };
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(q_waiting, (snapshot) => {
+      setWaitingTickets(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
+
+    return unsubscribe;
+  }, []);
+
+  let queueNumber;
+  useEffect(() => {
+    console.log(waitingTickets.length);
+    queueNumber = waitingTickets.length;
+  }, [waitingTickets]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -96,6 +123,7 @@ const GetTicket = ({ route }) => {
       timestamp: serverTimestamp(),
       status: "waiting",
       ticketNumber: letter + (tickets.length + 1),
+      queueNumber: queueNumber + 1,
     }).then((docRef) => {
       setComment("");
       console.log(docRef.id);
