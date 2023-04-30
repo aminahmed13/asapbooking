@@ -15,6 +15,8 @@ import {
   query,
   where,
   orderBy,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -84,11 +86,11 @@ const GetTicket = ({ route }) => {
     return unsubscribe;
   }, []);
 
-  let queueNumber;
-  useEffect(() => {
-    console.log(waitingTickets.length);
-    queueNumber = waitingTickets.length;
-  }, [waitingTickets]);
+  // let queueNumber;
+  // useEffect(() => {
+  //   console.log(waitingTickets.length);
+  //   queueNumber = waitingTickets.length;
+  // }, [waitingTickets]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -115,6 +117,7 @@ const GetTicket = ({ route }) => {
   });
 
   const handleGetTicket = () => {
+    // console.log(queueNumber, comment);
     addDoc(colRef, {
       customerId: customerId,
       serviceId: serviceId,
@@ -123,7 +126,7 @@ const GetTicket = ({ route }) => {
       timestamp: serverTimestamp(),
       status: "waiting",
       ticketNumber: letter + (tickets.length + 1),
-      queueNumber: queueNumber + 1,
+      // queueNumber: queueNumber + 1,
     }).then((docRef) => {
       setComment("");
       console.log(docRef.id);
@@ -132,6 +135,37 @@ const GetTicket = ({ route }) => {
       });
     });
   };
+
+  // const [currentTicket, setCurrentTicket] = useState(null);
+  // useEffect(() => {
+  //   if (tickets.length > 0) {
+  //     setCurrentTicket(waitingTickets[0]);
+  //     setWaitingTickets(waitingTickets.slice(1));
+  //   } else {
+  //     setCurrentTicket(null);
+  //     setWaitingTickets([]);
+  //   }
+  // }, [tickets]);
+
+  // // temp
+  // const handleCallNextTicket = () => {
+  //   if (currentTicket) {
+  //     const ticketRef = doc(colRef, currentTicket.id);
+  //     updateDoc(ticketRef, { status: "done" })
+  //       .then(() => {
+  //         setCurrentTicket(waitingTickets[0]);
+  //         setWaitingTickets(waitingTickets.slice(1));
+  //       })
+  //       .catch((error) => {
+  //         console.log("Error updating ticket: ", error);
+  //       });
+  //   }
+  // };
+
+  // // display current ticket
+  // useEffect(() => {
+  //   console.log(currentTicket);
+  // }, [currentTicket]);
   return (
     <View
       style={{

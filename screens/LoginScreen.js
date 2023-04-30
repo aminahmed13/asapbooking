@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { Input, CheckBox, Text, Button } from "@rneui/base";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
@@ -52,7 +52,12 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.background}></View>
+      <View style={styles.background}>
+        <Image
+          style={styles.logo}
+          source={require("../images/ASAPBooking.png")}
+        />
+      </View>
       <View style={styles.formContainer}>
         <CustomInput
           placeholder="Email"
@@ -136,6 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#5e17eb",
   },
   background: {
+    alignItems: "center",
     height: "50%",
   },
   formContainer: {
@@ -164,6 +170,10 @@ const styles = StyleSheet.create({
   link: {
     color: "blue",
     textDecorationLine: "underline",
+  },
+  logo: {
+    width: 300,
+    height: 300,
   },
 });
 

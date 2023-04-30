@@ -32,6 +32,8 @@ const CustomInput = (props) => {
       }}
       leftIcon={props.leftIcon}
       rightIcon={props.rightIcon}
+      errorStyle={props.errorStyle}
+      errorMessage={props.errorMessage}
     />
   );
 };

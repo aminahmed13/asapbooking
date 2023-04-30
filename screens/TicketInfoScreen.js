@@ -75,13 +75,24 @@ const TicketInfoScreen = ({ route, navigation }) => {
   }, []);
 
   const ticketNumber = ticket[0]?.data.ticketNumber;
+  const customerId = ticket[0]?.data.customerId;
   useEffect(() => {
     console.log(ticket);
     console.log(ticketNumber);
+    console.log(customerId);
   }, [ticket]);
 
   const handleCancelTicket = () => {
     console.log("cancel ticket");
+  };
+
+  const handleRequestSwap = () => {
+    console.log("request swap clicked");
+    navigation.navigate("Swap", {
+      ticketId: ticketId,
+      ticketNumber: ticketNumber,
+      customerId: customerId,
+    });
   };
   return (
     <View
@@ -231,6 +242,11 @@ const TicketInfoScreen = ({ route, navigation }) => {
           title="Cancel Ticket"
           onPress={handleCancelTicket}
           buttonColor="#ff0505"
+        />
+        <CustomButton
+          title="Request Swap"
+          onPress={handleRequestSwap}
+          buttonColor="#5e17eb"
         />
       </View>
     </View>

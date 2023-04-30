@@ -1,0 +1,12 @@
+Register Screen
+modify keyboardavoidingview
+
+
+ServicesScreen
+adjust waitng line 86
+
+
+Swap screen
+do not allow a person to swap his own ticket with his own
+
+

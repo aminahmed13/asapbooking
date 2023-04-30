@@ -25,16 +25,23 @@ const RegisterScreen = () => {
   const [confirmPasswordVisibility, setConfirmPasswordVisibility] =
     useState(false);
 
-  const handleRegister = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((cred) => {
-        console.log(cred.user);
-        updateProfile(cred.user, {
-          displayName: fullName,
-        });
-      })
+  const [showError, setShowError] = useState(false);
 
-      .catch((err) => console.log("This is your error: ", err));
+  const handleRegister = () => {
+    if (password === confirmPassword) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((cred) => {
+          console.log(cred.user);
+          updateProfile(cred.user, {
+            displayName: fullName,
+          });
+        })
+
+        .catch((err) => console.log("This is your error: ", err));
+    } else {
+      // alert("password mismatch");
+      setShowError(true);
+    }
   };
 
   const navigation = useNavigation();
@@ -66,7 +73,7 @@ const RegisterScreen = () => {
           }
           returnKeyType="next"
         />
-        <CustomInput
+        {/* <CustomInput
           placeholder="Phone Number"
           value={phone}
           onChangeText={setPhone}
@@ -83,7 +90,7 @@ const RegisterScreen = () => {
             />
           }
           returnKeyType="next"
-        />
+        /> */}
         <CustomInput
           placeholder="Email"
           value={email}
@@ -138,6 +145,8 @@ const RegisterScreen = () => {
           onChangeText={setConfrimPassword}
           label="Confirm Password"
           secureTextEntry={!confirmPasswordVisibility}
+          errorMessage={showError && "Passwords do not match"}
+          errorStyle={{ color: "red" }}
           leftIcon={
             <Icon
               name="lock"
