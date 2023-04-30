@@ -14,6 +14,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebase";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const RegisterScreen = () => {
   const [fullName, setFullName] = useState("");
@@ -52,7 +53,7 @@ const RegisterScreen = () => {
   });
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={styles.container}>
+    <SafeAreaView behavior="padding" style={styles.container}>
       <View style={styles.background}></View>
       <View style={styles.formContainer}>
         <CustomInput
@@ -180,7 +181,7 @@ const RegisterScreen = () => {
           buttonColor="#5e17eb"
         />
       </View>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

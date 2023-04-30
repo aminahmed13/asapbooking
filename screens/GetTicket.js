@@ -94,10 +94,10 @@ const GetTicket = ({ route }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: serviceName,
+      headerTitle: serviceName.toUpperCase(),
       headerTitleStyle: {
         color: "#fff",
-        fontSize: 25,
+        fontSize: 15,
       },
       headerStyle: {
         backgroundColor: "#5e17eb",
@@ -132,6 +132,9 @@ const GetTicket = ({ route }) => {
       console.log(docRef.id);
       navigation.navigate("TicketInfo", {
         ticketId: docRef.id,
+        serviceId: serviceId,
+        serviceName: serviceName,
+        task_completion_time: task_completion_time,
       });
     });
   };
@@ -170,7 +173,8 @@ const GetTicket = ({ route }) => {
     <View
       style={{
         backgroundColor: "#fff",
-        height: "100vh",
+        height: "100%",
+        position: "relative",
       }}
     >
       <View
@@ -189,12 +193,17 @@ const GetTicket = ({ route }) => {
           autoCapitalize="none"
           label="Comments"
           returnKeyType="done"
+          textAlignVertical="top"
         />
       </View>
       <View
         style={{
-          marginHorizontal: 50,
-          marginTop: 200,
+          // marginHorizontal: 50,
+          // marginTop: 200,
+          position: "absolute",
+          bottom: 60,
+          width: 300,
+          left: "13%",
         }}
       >
         <CustomButton

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Picker } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useState } from "react";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
+import { Picker } from "@react-native-picker/picker";
 import {
   collection,
   onSnapshot,
@@ -23,19 +24,22 @@ import {
 } from "firebase/firestore";
 import { auth, db, messaging } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { AntDesign } from "@expo/vector-icons";
 
 const GetTicket = ({ route }) => {
   const [selectedTicket, setTicket] = useState("");
   const [waitingTickets, setWaitingTickets] = useState([]);
   const colRef = collection(db, "tickets");
+
+  const { ticketId, ticketNumber, customerId, serviceId } = route.params;
+
   const q = query(
     colRef,
     where("status", "==", "waiting"),
-
+    where("serviceId", "==", serviceId),
     orderBy("timestamp")
   );
-
-  const { ticketId, ticketNumber, customerId } = route.params;
 
   useEffect(() => {
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -69,10 +73,10 @@ const GetTicket = ({ route }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Swap",
+      headerTitle: "SWAP",
       headerTitleStyle: {
         color: "#fff",
-        fontSize: 25,
+        fontSize: 15,
       },
       headerStyle: {
         backgroundColor: "#5e17eb",
@@ -173,44 +177,78 @@ const GetTicket = ({ route }) => {
   };
 
   return (
-    <View
+    <SafeAreaView
       style={{
         backgroundColor: "#fff",
-        height: "100vh",
+        height: "100%",
+        position: "relative",
+        alignItems: "center",
       }}
     >
+      {/* your ticket is badge */}
       <View
         style={{
+          backgroundColor: "#5e17eb",
+          borderRadius: 10,
+          padding: 10,
+          marginBottom: 50,
           marginTop: 50,
-          marginHorizontal: 90,
+          marginHorizontal: 30,
+          paddingHorizontal: 50,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontWeight: "bold",
+            textAlign: "center",
+            fontSize: 18,
+          }}
+        >
+          Your ticket is {ticketNumber}
+        </Text>
+      </View>
+
+      {/* exchange icon */}
+      <View
+        style={{
+          width: 150,
+          height: 150,
+          backgroundColor: "#c92a2a",
+          borderRadius: 100,
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: 50,
+        }}
+      >
+        <AntDesign name="swap" color="white" size={100} />
+      </View>
+
+      <View
+        style={{
+          marginTop: 10,
+          marginHorizontal: 50,
           textAlign: "center",
         }}
       >
-        <View
-          style={{
-            backgroundColor: "rgba(94, 23, 235, 0.8)",
-            borderRadius: 10,
-            padding: 10,
-            marginBottom: 20,
-          }}
-        >
-          <Text style={{ color: "white", fontWeight: "bold" }}>
-            Your ticket is {ticketNumber}
-          </Text>
-        </View>
-
         <Text
           style={{
             fontWeight: 500,
             fontSize: 20,
             marginBottom: 20,
+            textAlign: "center",
           }}
         >
-          Select the ticket you want to swap with:
+          Swap with:
         </Text>
         <Picker
           selectedValue={selectedTicket}
           onValueChange={handleValueChange}
+          style={{
+            width: 200,
+            height: 50,
+            backgroundColor: "#e9ecef",
+          }}
         >
           {waitingTickets.map((option, index) => (
             <Picker.Item
@@ -221,10 +259,14 @@ const GetTicket = ({ route }) => {
           ))}
         </Picker>
       </View>
+
+      {/* request button */}
       <View
         style={{
-          marginHorizontal: 50,
-          marginTop: 200,
+          position: "absolute",
+          bottom: 60,
+          width: 300,
+          left: "13%",
         }}
       >
         <CustomButton
@@ -233,7 +275,7 @@ const GetTicket = ({ route }) => {
           buttonColor="#5e17eb"
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

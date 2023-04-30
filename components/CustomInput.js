@@ -17,6 +17,7 @@ const CustomInput = (props) => {
       keyboardType={props.keyboardType}
       autoCapitalize={props.autoCapitalize}
       label={props.label}
+      textAlignVertical={props.textAlignVertical}
       secureTextEntry={props.secureTextEntry}
       labelStyle={{
         marginBottom: 5,

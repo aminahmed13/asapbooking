@@ -6,7 +6,13 @@ import ServiceOption from "../components/ServiceOption";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { collection, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { useEffect } from "react";
 import { useState } from "react";
 
@@ -39,6 +45,7 @@ const ServicesScreen = () => {
 
     return unsubscribe;
   }, []);
+
   const signOutUser = () => {
     signOut(auth)
       .then(() => {
@@ -50,10 +57,10 @@ const ServicesScreen = () => {
   };
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: `Choose a Service`,
+      headerTitle: `CHOOSE SERVICE`,
       headerTitleStyle: {
         color: "#fff",
-        fontSize: 25,
+        fontSize: 15,
       },
       headerStyle: {
         backgroundColor: "#5e17eb",
@@ -76,14 +83,14 @@ const ServicesScreen = () => {
     <View
       style={{
         backgroundColor: "#fff",
-        height: "100vh",
+        height: "100%",
       }}
     >
       {services.map((service) => (
         <ServiceOption
           key={service.id}
+          serviceId={service.id}
           serviceName={service.data.service_name}
-          waiting="3"
           onPress={() => {
             navigation.navigate("GetTicket", {
               serviceId: service.id,
