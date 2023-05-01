@@ -42,7 +42,6 @@ const ServiceOption = (props) => {
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
-        // marginHorizontal: 20,
         marginVertical: 10,
         borderBottomWidth: 2,
         borderBottomColor: "whitesmoke",

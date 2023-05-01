@@ -1,7 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React from "react";
-import { Button, Input, Image } from "@rneui/base";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { Input } from "@rneui/base";
 import { useState } from "react";
 
 const CustomInput = (props) => {

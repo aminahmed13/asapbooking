@@ -7,6 +7,12 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "../firebase";
 import {
+  Ionicons,
+  AntDesign,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+
+import {
   collection,
   onSnapshot,
   orderBy,
@@ -84,6 +90,7 @@ const ServicesScreen = () => {
       style={{
         backgroundColor: "#fff",
         height: "100%",
+        position: "relative",
       }}
     >
       {services.map((service) => (
@@ -101,10 +108,46 @@ const ServicesScreen = () => {
           }}
         />
       ))}
+
+      {/* footer  */}
+      <View style={styles.footer}>
+        <TouchableOpacity>
+          <MaterialCommunityIcons
+            name="ticket-confirmation-outline"
+            size={24}
+            color="black"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("SwapRequests");
+          }}
+        >
+          <AntDesign name="swap" color="black" size={24} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 export default ServicesScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    height: 50,
+    backgroundColor: "#e9ecef",
+  },
+});
+
+{
+  /* <Ionicons name="home-outline" size={24} color="black" />
+        <Ionicons name="search-outline" size={24} color="black" />
+        <Ionicons name="person-outline" size={24} color="black" /> */
+}

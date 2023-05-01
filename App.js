@@ -8,13 +8,14 @@ import ServicesScreen from "./screens/ServicesScreen";
 import GetTicket from "./screens/GetTicket";
 import TicketInfoScreen from "./screens/TicketInfoScreen";
 import SwapScreen from "./screens/SwapScreen";
+import SwapRequestsScreen from "./screens/SwapRequestsScreen";
 // import "./firebase";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Services">
+      <Stack.Navigator>
         {/* the screens */}
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen name="GetTicket" component={GetTicket} />
         <Stack.Screen name="TicketInfo" component={TicketInfoScreen} />
         <Stack.Screen name="Swap" component={SwapScreen} />
+        <Stack.Screen name="SwapRequests" component={SwapRequestsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

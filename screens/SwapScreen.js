@@ -27,10 +27,12 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
 
-const GetTicket = ({ route }) => {
+const SwapScreen = ({ route }) => {
   const [selectedTicket, setTicket] = useState("");
   const [waitingTickets, setWaitingTickets] = useState([]);
   const colRef = collection(db, "tickets");
+
+  const swapColRef = collection(db, "swapRequests");
 
   const { ticketId, ticketNumber, customerId, serviceId } = route.params;
 
@@ -126,6 +128,7 @@ const GetTicket = ({ route }) => {
             });
             setSelectedTicketDetails(selectedTDetails);
             console.log(selectedTDetails[0].ticketNumber);
+            console.log(selectedTDetails[0]);
           }
         });
       })
@@ -141,39 +144,53 @@ const GetTicket = ({ route }) => {
     console.log(`ticketAId: ${ticketId}`);
     console.log(`ticketBId: ${selectedTicketDetails[0].id}`);
 
-    const swapRequestDocRef = doc(
-      colRef,
-      ticketId + "/swapRequests/" + customerId
-    );
+    // const swapRequestDocRef = doc(
+    //   colRef,
+    //   ticketId + "/swapRequests/" + customerId
+    // );
 
-    setDoc(swapRequestDocRef, {
-      userAId: customerId,
-      userBId: selectedTicketDetails[0].customerId,
-      ticketAId: ticketId,
-      ticketBId: selectedTicketDetails[0].id,
+    addDoc(swapColRef, {
+      requesterId: customerId, //  ID of the current user
+      requesterTicketId: ticketId, // ID of the ticket of the requester
+      requestedTicketId: selectedTicketDetails[0].id, // ID of the ticket to swap
+      requestedUserId: selectedTicketDetails[0].customerId, // ID of the user to swap with
       status: "pending",
-    });
-
-    /*
-    const userBTopic = `user_${selectedTicketDetails[0].customerId}`;
-    const message = {
-      notification: {
-        title: "Swap request",
-        body: `User ${customerId} wants to swap tickets with you`,
-      },
-      topic: userBTopic,
-    };
-
-    send(message)
-      .then(() => {
-        console.log(
-          `Swap request notification sent to user ${selectedTicketDetails[0].customerId}`
-        );
+    })
+      .then((docRef) => {
+        console.log(docRef.id);
       })
-      .catch((error) => {
-        console.error("Error sending swap request notification:", error);
+      .catch((err) => {
+        console.log(err.message);
       });
-     */
+
+    // setDoc(swapRequestDocRef, {
+    //   userAId: customerId,
+    //   userBId: selectedTicketDetails[0].customerId,
+    //   ticketAId: ticketId,
+    //   ticketBId: selectedTicketDetails[0].id,
+    //   status: "pending",
+    // });
+
+    // /*
+    // const userBTopic = `user_${selectedTicketDetails[0].customerId}`;
+    // const message = {
+    //   notification: {
+    //     title: "Swap request",
+    //     body: `User ${customerId} wants to swap tickets with you`,
+    //   },
+    //   topic: userBTopic,
+    // };
+
+    // send(message)
+    //   .then(() => {
+    //     console.log(
+    //       `Swap request notification sent to user ${selectedTicketDetails[0].customerId}`
+    //     );
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error sending swap request notification:", error);
+    //   });
+    // //  */
   };
 
   return (
@@ -279,6 +296,6 @@ const GetTicket = ({ route }) => {
   );
 };
 
-export default GetTicket;
+export default SwapScreen;
 
 const styles = StyleSheet.create({});
