@@ -152,12 +152,15 @@ const SwapScreen = ({ route }) => {
     addDoc(swapColRef, {
       requesterId: customerId, //  ID of the current user
       requesterTicketId: ticketId, // ID of the ticket of the requester
+      requesterTicketNumber: ticketNumber,
+      requestedTicketNumber: selectedTicketDetails[0].ticketNumber,
       requestedTicketId: selectedTicketDetails[0].id, // ID of the ticket to swap
       requestedUserId: selectedTicketDetails[0].customerId, // ID of the user to swap with
       status: "pending",
     })
       .then((docRef) => {
         console.log(docRef.id);
+        navigation.replace("SwapRequests");
       })
       .catch((err) => {
         console.log(err.message);
