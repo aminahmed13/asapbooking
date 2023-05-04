@@ -21,23 +21,56 @@ import {
 } from "firebase/firestore";
 import { useEffect } from "react";
 import { useState } from "react";
+import NotificationBadge from "../components/NotificationBadge";
 
 const ServicesScreen = () => {
   const navigation = useNavigation();
   const [userName, setUserName] = useState("");
   const [services, setServices] = useState([]);
+  const [showBadge, setShowBadge] = useState(true);
+  const [customerId, setCustomerId] = useState("");
+  const [swapRequests, setSwapRequests] = useState([]);
 
-  // i used this to get the displayName of the current user
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-  //     if (authUser) {
-  //       setUserName(authUser.displayName);
-  //     }
-  //   });
+  // customer id
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      if (authUser) {
+        setCustomerId(authUser.uid);
+      }
+    });
 
-  //   return unsubscribe;
-  // }, []);
+    return unsubscribe;
+  }, []);
 
+  useEffect(() => {
+    const swapColRef = collection(db, "swapRequests");
+
+    // incoming swap requests
+    const q = query(
+      swapColRef,
+      where("requestedUserId", "==", customerId),
+      where("status", "==", "pending")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setSwapRequests(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
+
+    return unsubscribe;
+  }, [customerId]);
+
+  useEffect(() => {
+    if (swapRequests.length > 0) {
+      setShowBadge(true);
+    } else {
+      setShowBadge(false);
+    }
+  }, [swapRequests]);
   useEffect(() => {
     const colRef = collection(db, "services");
     const unsubscribe = onSnapshot(colRef, (snapshot) => {
@@ -85,6 +118,7 @@ const ServicesScreen = () => {
     });
   });
 
+  //
   return (
     <View
       style={{
@@ -111,7 +145,11 @@ const ServicesScreen = () => {
 
       {/* footer  */}
       <View style={styles.footer}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("MyTickets");
+          }}
+        >
           <MaterialCommunityIcons
             name="ticket-confirmation-outline"
             size={24}
@@ -123,6 +161,7 @@ const ServicesScreen = () => {
             navigation.navigate("SwapRequests");
           }}
         >
+          {showBadge && <NotificationBadge />}
           <AntDesign name="swap" color="black" size={24} />
         </TouchableOpacity>
       </View>

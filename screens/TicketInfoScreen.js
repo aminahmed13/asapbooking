@@ -8,6 +8,8 @@ import CustomButton from "../components/CustomButton";
 import { useState } from "react";
 import {
   collection,
+  deleteDoc,
+  doc,
   documentId,
   onSnapshot,
   orderBy,
@@ -122,6 +124,17 @@ const TicketInfoScreen = ({ route, navigation }) => {
   // cancel ticket deletes the current ticket and returns back to services screen
   const handleCancelTicket = () => {
     console.log("cancel ticket");
+
+    const ticketRef = doc(colRef, ticketId);
+
+    deleteDoc(ticketRef)
+      .then(() => {
+        console.log("delete succesful");
+        navigation.replace("Services");
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   const handleRequestSwap = () => {

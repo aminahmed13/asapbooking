@@ -53,14 +53,14 @@ const SwapRequestsScreen = () => {
   useEffect(() => {
     const swapColRef = collection(db, "swapRequests");
 
-    // ppl requesting to swap their tickets with me
+    // incoming swap requests
     const q = query(
       swapColRef,
       where("requestedUserId", "==", customerId),
       where("status", "==", "pending")
     );
 
-    //my requests to swap tickets with others
+    //my requests
     const q2 = query(swapColRef, where("requesterId", "==", customerId));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setSwapRequests(
@@ -176,19 +176,24 @@ const SwapRequestsScreen = () => {
 
   const handleTicketClick = (requestedTicketId) => {
     const TicketRef = doc(colRef, requestedTicketId);
+    // console.log(TicketRef);
     let serviceId;
     let service_name;
     let task_completion_time;
     getDoc(TicketRef)
-      .then((data) => {
-        serviceId = data.data().serviceId;
-        console.log(serviceId);
+      .then((docd) => {
+        // console.log(doc);
+        serviceId = docd.data().serviceId;
+        // console.log(serviceId);
         const ServiceRef = doc(servicesColRef, serviceId);
 
         getDoc(ServiceRef)
-          .then((doc) => {
-            service_name = doc.data().service_name;
-            task_completion_time = doc.data().task_completion_time;
+          .then((docs) => {
+            console.log(docs);
+            service_name = docs.data().service_name;
+            // console.log(service_name);
+
+            task_completion_time = docs.data().task_completion_time;
             // console.log(serviceId, service_name, task_completion_time);
             navigation.navigate("TicketInfo", {
               ticketId: requestedTicketId,
@@ -213,7 +218,7 @@ const SwapRequestsScreen = () => {
       }}
     >
       <ButtonGroup
-        buttons={["My Requests", "Requesting me"]}
+        buttons={["My Requests", "Incoming Requests"]}
         selectedIndex={selectedIndex}
         onPress={(value) => {
           setSelectedIndex(value);
@@ -236,10 +241,7 @@ const SwapRequestsScreen = () => {
               data={swapRequests}
               renderItem={({ item }) => (
                 <View style={styles.swapRequestItem}>
-                  <Text>{`User ${item.data.requesterId.slice(
-                    0,
-                    5
-                  )} wants to swap ticket with you.`}</Text>
+                  <Text>{`${item.data.requesterTicketNumber} wants to swap ticket with you.`}</Text>
                   <View style={styles.buttonsContainer}>
                     {/* buttons container */}
                     <Button
